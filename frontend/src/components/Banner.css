@@ -1,0 +1,106 @@
+/* frontend/src/components/Banner.css */
+
+/* Base sidebar style */
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px; /* Expanded width */
+  height: 100vh;
+  background-color: #333;
+  color: #fff;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+}
+
+/* Collapsed state: shrink width */
+.banner.collapsed {
+  width: 50px; /* Collapsed width */
+}
+
+/* The collapse/expand button */
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 3rem;
+  cursor: pointer;
+  margin: 0 auto 1rem;
+  padding: 0;
+}
+
+/* Title (only shown when not collapsed) */
+.banner-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden; /* Guard against overflow if text is long */
+}
+
+/* Navigation list container */
+.banner-nav {
+  flex: 1;
+}
+
+/* UL resets */
+.banner-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* LI spacing */
+.banner-nav li {
+  margin: 0.5rem 0;
+}
+
+/* Link style */
+.banner-link {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Hover highlight */
+.banner-link:hover {
+  background-color: #444;
+}
+
+/* Active link underline + bold */
+.banner-link.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Icon inside link (always visible) */
+.link-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 0.5rem;
+  object-fit: contain;
+}
+
+/* Text inside link (hidden when collapsed) */
+.link-text {
+  font-size: 1rem;
+}
+
+/* When the sidebar is collapsed: hide link-text, center icons */
+.banner.collapsed .link-text {
+  display: none;
+}
+
+.banner.collapsed .link-icon {
+  margin: 0 auto; /* Center the icon horizontally */
+}
+
+/* Optional: reduce padding on collapsed to keep icons centered */
+.banner.collapsed .banner-link {
+  justify-content: center;
+}

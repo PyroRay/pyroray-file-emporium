@@ -1,42 +1,19 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.app-container {
+  display: flex;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Default main‐content when sidebar is expanded */
+.main-content {
+  margin-left: 200px; /* matches expanded sidebar width */
+  padding: 1rem;
+  width: calc(100% - 200px);
+  min-height: 100vh;
+  background-color: #444;
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* When the sidebar is collapsed, shift main‐content left margin */
+.banner.collapsed ~ .main-content {
+  margin-left: 50px; /* matches collapsed sidebar width */
+  width: calc(100% - 50px);
 }
