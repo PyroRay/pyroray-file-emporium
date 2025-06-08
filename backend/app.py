@@ -2,7 +2,7 @@ from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
 import tempfile
 from pathlib import Path
-# import os
+import os
 # import zipfile
 # import json
 # from pypdf import PdfReader, PdfWriter
@@ -11,7 +11,12 @@ from tools.pdf_utils import (
     save_uploaded_pdfs,
     parse_segments_and_names,
     process_segments,
-    make_zip,
+)
+
+from tools.file_utils import (
+  chunk_file,
+  reassemble_file,
+  make_zip,
 )
 
 app = Flask(__name__)
@@ -76,7 +81,67 @@ def pdf_segments():
   return send_file(
       zip_path,
       as_attachment=True,
-      download_name=Path(zip_path).name,
+      download_name="pdf_segments.zip",
+  )
+
+@app.route("/api/file/chunk", methods=["POST"])
+def file_chunk():
+  # 1) Make a temp directory and save the single upload
+  tmp_dir = tempfile.mkdtemp()
+  upload = request.files.get("file")
+  if not upload: return jsonify({"error": "No file uploaded"}), 400
+  input_path = os.path.join(tmp_dir, upload.filename)
+  upload.save(input_path)
+
+  # 2) Get chunk size in bytes form
+  try:
+    chunk_size = int(request.form.get("chunkSize", "0"))
+    assert chunk_size > 0
+  except:
+    return jsonify({"error": "Invalid or missing chunkSize"}), 400
+  
+  # 3) Split the file
+  chunks = chunk_file(input_path, chunk_size)
+
+  # 4) Compress the files into a zip
+  zip_path = make_zip(chunks, tmp_dir)
+  return send_file(
+      zip_path,
+      as_attachment=True,
+      download_name="chunks.zip",
+  )
+  
+
+@app.route("/api/file/reassemble", methods=["POST"])
+def file_reassemble():
+  # 1) tmp dir & save all chunk uploads
+  tmp_dir = tempfile.mkdtemp()
+  uploads = request.files.getlist("files[]")
+  if not uploads:
+    return jsonify({"error": "No chunk files uploaded"}), 400
+
+  paths = []
+  for f in uploads:
+    destination = os.path.join(tmp_dir, f.filename)
+    f.save(destination)
+    paths.append(destination)
+
+  # 2) sort them by filename so they’re in correct order
+  # because of this it probably wont work well if you upload
+  # files that aren't ordered by name
+  paths.sort()
+
+  # 3) reassemble
+  out_name = request.form.get("outputName", "reassembled")
+  if not out_name.lower().endswith(".bin"):
+    out_name += ".bin"
+  out_path = os.path.join(tmp_dir, out_name)
+  reassemble_file(paths, out_path)
+
+  return send_file(
+    out_path,
+    as_attachment=True,
+    download_name=out_name,
   )
 
 if __name__ == "__main__":

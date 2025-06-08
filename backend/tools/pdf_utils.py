@@ -1,8 +1,8 @@
 import os
 import json
-import zipfile
+# import zipfile
 import tempfile
-from pathlib import Path
+# from pathlib import Path
 from pypdf import PdfReader, PdfWriter
 
 def save_uploaded_pdfs(uploaded_files, tmp_dir):
@@ -101,20 +101,3 @@ def process_segments(saved_paths, segments, names, tmp_dir):
     output_paths.append(out_path)
 
   return output_paths
-
-def make_zip(output_paths, tmp_dir):
-  """
-  If we have multiple outputs, package them into a zip and return path
-  """
-
-  if len(output_paths) <= 1:
-    # send this file only - shouldn't happen with current app.py behaviour
-    # but doesn't hurt to have
-    return output_paths[0]
-  
-  zip_path = os.path.join(tmp_dir, "segments_output.zip")
-  with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-    for p in output_paths:
-      zipf.write(p, arcname=Path(p).name)
-
-  return zip_path
