@@ -1,6 +1,9 @@
 # Python venv
 venv/
 
+# pychace
+__pycache__/
+
 # Test files
 test_files/
 test_segments.py
